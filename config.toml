@@ -1,0 +1,16 @@
+# Managed Codex defaults for a specific ChatGPT Edu workspace.
+# REQUIRED: Replace the placeholder with the intended Edu workspace UUID.
+# This restricts authentication; it does not grant membership or a seat.
+forced_login_method = "chatgpt"
+forced_chatgpt_workspace_id = "REPLACE_WITH_EDU_WORKSPACE_UUID"
+
+approval_policy = "never"
+default_permissions = "safe-noncoder"
+web_search = "cached"
+
+[apps._default]
+enabled = true
+destructive_enabled = false
+open_world_enabled = false
+approvals_reviewer = "user"
+default_tools_approval_mode = "prompt"

@@ -1,0 +1,91 @@
+# Balanced managed requirements for non-technical ChatGPT Edu users.
+# Requires Codex 0.138.0 or later for managed permission profiles.
+
+default_permissions = "safe-noncoder"
+allowed_approval_policies = ["never"]
+allowed_web_search_modes = ["cached"]
+allow_remote_control = false
+allow_login_shell = false
+allow_managed_hooks_only = true
+
+[allowed_permission_profiles]
+safe-noncoder = true
+
+[features]
+apps = true
+plugins = false
+in_app_browser = true
+browser_use = true
+browser_use_external = false
+browser_use_full_cdp_access = false
+computer_use = false
+fast_mode = false
+hooks = true
+
+[permissions.safe-noncoder]
+description = "Read project files and write only inside each project's Working folder."
+extends = ":read-only"
+
+[permissions.safe-noncoder.filesystem]
+":root" = "deny"
+":minimal" = "read"
+glob_scan_max_depth = 4
+
+[permissions.safe-noncoder.filesystem.":workspace_roots"]
+"." = "read"
+"Working" = "write"
+".codex" = "read"
+".git" = "read"
+"**/.env" = "deny"
+"**/.env.*" = "deny"
+"**/*.env" = "deny"
+"**/.npmrc" = "deny"
+"**/.pypirc" = "deny"
+"**/.netrc" = "deny"
+"**/*.pem" = "deny"
+"**/*.key" = "deny"
+"**/*.p12" = "deny"
+"**/*.pfx" = "deny"
+"**/id_rsa" = "deny"
+"**/id_ed25519" = "deny"
+"**/*secret*" = "deny"
+"**/*credential*" = "deny"
+
+[permissions.safe-noncoder.network]
+enabled = false
+
+[permissions.filesystem]
+deny_read = [
+  "/**/.env",
+  "/**/.env.*",
+  "/**/.npmrc",
+  "/**/.pypirc",
+  "/**/.netrc",
+  "/**/*.pem",
+  "/**/*.key",
+  "/**/*.p12",
+  "/**/*.pfx",
+  "/**/credentials.json",
+  "/**/*service-account*.json",
+  "/**/.kube/config",
+  "/**/.docker/config.json",
+  "~/.ssh",
+  "~/.aws",
+  "~/.azure",
+  "~/.config/gcloud",
+]
+
+[rules]
+prefix_rules = [
+  { pattern = [{ token = "rm" }], decision = "forbidden", justification = "Direct file deletion is disabled for this user profile." },
+  { pattern = [{ token = "rmdir" }], decision = "forbidden", justification = "Directory deletion is disabled for this user profile." },
+  { pattern = [{ token = "shred" }], decision = "forbidden", justification = "Permanent file deletion is disabled." },
+  { pattern = [{ token = "git" }, { token = "clean" }], decision = "forbidden", justification = "Deleting untracked files is disabled." },
+  { pattern = [{ token = "git" }, { token = "reset" }, { token = "--hard" }], decision = "forbidden", justification = "Destructive repository resets are disabled." },
+  { pattern = [{ token = "Remove-Item" }], decision = "forbidden", justification = "PowerShell file deletion is disabled." },
+  { pattern = [{ token = "del" }], decision = "forbidden", justification = "Windows file deletion is disabled." },
+]
+
+# Empty managed allowlist: MCP servers remain disabled until an administrator
+# adds approved server identities.
+[mcp_servers]
