@@ -178,6 +178,10 @@ prefix_rules = [
 The following values restrict Codex to ChatGPT authentication and one specific ChatGPT Edu workspace. They also establish cautious starting behavior for apps and connectors. These defaults are not a replacement for tool-specific managed requirements.
 
 ```toml
+# Keep these authentication keys at the top level, before any [table] header.
+# TOML keys after a table header belong to that table and will not be read as
+# Codex authentication settings.
+#
 # REQUIRED: Replace this placeholder with the intended ChatGPT Edu workspace
 # UUID before deployment.
 forced_login_method = "chatgpt"
@@ -196,7 +200,7 @@ approvals_reviewer = "user"
 default_tools_approval_mode = "prompt"
 ```
 
-`forced_login_method = "chatgpt"` prevents API-key authentication from being used instead of the managed ChatGPT login. `forced_chatgpt_workspace_id` limits accepted ChatGPT logins to the named workspace UUID. These settings do not add a user to the Edu workspace, assign a seat, or replace identity-provider controls. Replace the placeholder before deployment.
+`forced_login_method = "chatgpt"` prevents API-key authentication from being used instead of the managed ChatGPT login. `forced_chatgpt_workspace_id` limits accepted ChatGPT logins to the named workspace UUID. Keep both keys at the top level of `config.toml`, before the first TOML table header such as `[apps._default]`; otherwise TOML assigns them to that table instead of treating them as Codex authentication settings. These settings do not add a user to the Edu workspace, assign a seat, or replace identity-provider controls. Replace the placeholder before deployment.
 
 For users who cannot confidently review app approval prompts, an organization may choose:
 
@@ -692,18 +696,22 @@ Users should expect failure when asking Codex to:
 
 1. Confirm every managed client runs Codex 0.138.0 or later.
 2. Replace `REPLACE_WITH_EDU_WORKSPACE_UUID` in `config.toml` with the intended ChatGPT Edu workspace UUID.
-3. Remove legacy `sandbox_mode`, `sandbox_workspace_write`, and profile-level `--sandbox` selections from the deployment.
-4. Deploy the hard restrictions through a supported managed `requirements.toml` source.
-5. Deploy `config.toml` through the organization's supported managed-default mechanism.
-6. Install any managed hook scripts separately and reference them using administrator-controlled absolute paths.
-7. Test on every supported operating system. Pay particular attention to native Windows filesystem enforcement and recursive glob behavior.
-8. Test that a login for a different ChatGPT workspace is rejected.
-9. Test that Codex can read a project and write to `Working`.
-10. Test that writes outside `Working` fail.
-11. Test that protected credential files cannot be read.
-12. Test that local command networking fails while hosted search and the in-app browser behave as intended.
-13. Test app prompts and verify that destructive and open-world tools are unavailable by default.
-14. Start with a small pilot group before an organization-wide rollout.
+3. Keep both authentication keys above the first `[table]` header in `config.toml`.
+4. Deploy `config.toml` through MDM and restart Codex on a pilot device.
+5. Confirm an account in the intended Edu workspace can sign in and start Codex.
+6. Confirm a personal account or account in another ChatGPT workspace is rejected.
+7. Confirm API-key sign-in is unavailable or rejected.
+8. Confirm the MDM deployment persists after a device restart or normal sync cycle.
+9. Remove legacy `sandbox_mode`, `sandbox_workspace_write`, and profile-level `--sandbox` selections from the deployment.
+10. Deploy the hard restrictions through a supported managed `requirements.toml` source.
+11. Install any managed hook scripts separately and reference them using administrator-controlled absolute paths.
+12. Test on every supported operating system. Pay particular attention to native Windows filesystem enforcement and recursive glob behavior.
+13. Test that Codex can read a project and write to `Working`.
+14. Test that writes outside `Working` fail.
+15. Test that protected credential files cannot be read.
+16. Test that local command networking fails while hosted search and the in-app browser behave as intended.
+17. Test app prompts and verify that destructive and open-world tools are unavailable by default.
+18. Start with a small pilot group before an organization-wide rollout.
 
 ## Known limitations
 

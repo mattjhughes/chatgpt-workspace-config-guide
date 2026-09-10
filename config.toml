@@ -1,4 +1,9 @@
 # Managed Codex defaults for a specific ChatGPT Edu workspace.
+#
+# IMPORTANT: Keep these authentication keys at the top level, before the first
+# [table] header in this file. In TOML, keys placed after a table header belong
+# to that table and will not be read as Codex authentication settings.
+#
 # REQUIRED: Replace the placeholder with the intended Edu workspace UUID.
 # This restricts authentication; it does not grant membership or a seat.
 forced_login_method = "chatgpt"
