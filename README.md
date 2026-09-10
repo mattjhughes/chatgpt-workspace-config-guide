@@ -5,18 +5,21 @@ This repository contains a least-privilege managed Codex configuration for non-t
 ## Files
 
 - `requirements.toml` — administrator-enforced security boundaries.
-- `config.toml` — managed defaults plus the ChatGPT Edu workspace sign-in restriction.
+- `config.toml` — the two settings that restrict sign-in to the ChatGPT Edu workspace.
 - `recommended-safe-noncoder-managed-policy.md` — a plain-language explanation of each important setting, including benefits and tradeoffs.
 
-## Required deployment edit
+## Add to an existing `config.toml`
 
-Before deploying `config.toml`, replace:
+This template is intentionally limited to authentication. It does not set permissions, web search, app, or other Codex behavior.
+
+If a device already has a `config.toml`, do not replace that file. Paste these two settings into it instead:
 
 ```toml
+forced_login_method = "chatgpt"
 forced_chatgpt_workspace_id = "REPLACE_WITH_EDU_WORKSPACE_UUID"
 ```
 
-with the UUID of the intended ChatGPT Edu workspace. Keep the value quoted.
+Replace the placeholder with the UUID of the intended ChatGPT Edu workspace, and keep the value quoted.
 
 The restriction does not add users to the workspace or grant them a seat. It only prevents Codex from accepting a ChatGPT login associated with a different workspace.
 

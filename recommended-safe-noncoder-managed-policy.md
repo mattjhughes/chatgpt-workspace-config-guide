@@ -175,41 +175,16 @@ prefix_rules = [
 
 ## Optional managed-default `config.toml`
 
-The following values restrict Codex to ChatGPT authentication and one specific ChatGPT Edu workspace. They also establish cautious starting behavior for apps and connectors. These defaults are not a replacement for tool-specific managed requirements.
+The following two values restrict Codex to ChatGPT authentication and one specific ChatGPT Edu workspace. They do not set permissions, web search, app behavior, or other Codex defaults. If a device already has a `config.toml`, paste these two top-level keys into it rather than replacing the file.
 
 ```toml
-# Keep these authentication keys at the top level, before any [table] header.
-# TOML keys after a table header belong to that table and will not be read as
-# Codex authentication settings.
-#
 # REQUIRED: Replace this placeholder with the intended ChatGPT Edu workspace
 # UUID before deployment.
 forced_login_method = "chatgpt"
 forced_chatgpt_workspace_id = "REPLACE_WITH_EDU_WORKSPACE_UUID"
-
-# Match the managed requirements and use predictable starting behavior.
-approval_policy = "never"
-default_permissions = "safe-noncoder"
-web_search = "cached"
-
-[apps._default]
-enabled = true
-destructive_enabled = false
-open_world_enabled = false
-approvals_reviewer = "user"
-default_tools_approval_mode = "prompt"
 ```
 
 `forced_login_method = "chatgpt"` prevents API-key authentication from being used instead of the managed ChatGPT login. `forced_chatgpt_workspace_id` limits accepted ChatGPT logins to the named workspace UUID. Keep both keys at the top level of `config.toml`, before the first TOML table header such as `[apps._default]`; otherwise TOML assigns them to that table instead of treating them as Codex authentication settings. These settings do not add a user to the Edu workspace, assign a seat, or replace identity-provider controls. Replace the placeholder before deployment.
-
-For users who cannot confidently review app approval prompts, an organization may choose:
-
-```toml
-[apps._default]
-approvals_reviewer = "auto_review"
-```
-
-Automatic review is more convenient, but it delegates approval judgment to a reviewer model. It does not create a stronger sandbox and does not protect actions that are already allowed without approval.
 
 ## Detailed explanation
 
@@ -594,52 +569,6 @@ What it does not control:
 - Codex cloud networking.
 
 Those surfaces require their own controls.
-
-## App defaults
-
-### `enabled = true`
-
-Apps are available by default unless an app-specific rule disables one.
-
-### `destructive_enabled = false`
-
-App tools marked with a destructive hint are blocked by default.
-
-Examples may include deleting, cancelling, or irreversibly changing external data. Enforcement depends on the app tool advertising the appropriate metadata.
-
-### `open_world_enabled = false`
-
-App tools marked with an open-world hint are blocked by default.
-
-This reduces broad external actions, but it is not a substitute for reviewing each app and tool. Enforcement depends on accurate tool metadata.
-
-### `approvals_reviewer = "user"`
-
-The human user reviews app approval prompts.
-
-Benefit:
-
-- External app actions remain visible to the user.
-
-Tradeoff:
-
-- Non-technical users may not understand every prompt.
-
-Using `auto_review` reduces user burden but delegates the decision to another model.
-
-### `default_tools_approval_mode = "prompt"`
-
-App tools without a more specific override prompt for approval by default.
-
-Benefit:
-
-- App operations do not silently run merely because an app is enabled.
-
-Tradeoff:
-
-- App-heavy workflows require more approvals and may feel slower.
-
-For high-value apps, define explicit app and tool policies rather than depending only on `_default` behavior.
 
 ## Command rules
 
